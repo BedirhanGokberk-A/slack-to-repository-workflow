@@ -1,0 +1,13 @@
+config.json
+
+**pycache**/
+*.pyc
+
+*.log
+
+*/slack/messages.json
+*/slack/threads.json
+
+*/files/
+
+.env
