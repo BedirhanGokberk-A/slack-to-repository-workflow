@@ -314,3 +314,21 @@ On subsequent executions, only messages and files shared after the last recorded
 * Downloads only newly shared files
 * Keeps documentation and exports up to date
 * Scales better for long-running projects
+
+---
+
+## Multi-Project Synchronization
+
+For company-level usage, the workflow can be executed across multiple projects using `sync_all_projects.py`.
+
+This script runs the workflow for each configured project and stores execution results in a local log file.
+
+It can also be connected to Windows Task Scheduler or a server cron job to keep exported repositories synchronized automatically.
+
+### Benefits
+
+* Centralized project synchronization
+* Automated updates across multiple repositories
+* Execution logging and monitoring
+* Suitable for large-scale project environments
+

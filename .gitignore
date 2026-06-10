@@ -5,6 +5,8 @@ __pycache__/
 
 *.log
 
+logs/
+
 */slack/messages.json
 */slack/threads.json
 
