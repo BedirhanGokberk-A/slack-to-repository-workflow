@@ -1,6 +1,6 @@
 config.json
 
-**pycache**/
+__pycache__/
 *.pyc
 
 *.log
@@ -9,5 +9,7 @@ config.json
 */slack/threads.json
 
 */files/
+
+state.json
 
 .env

@@ -13,11 +13,14 @@ from config import (
     PROJECT_NAME
 )
 
+from state_manager import load_last_timestamp, save_last_timestamp
+
+
 PROJECT_DIR = Path(PROJECT_NAME)
 
 OUTPUT_FILE = PROJECT_DIR / "slack" / "messages.json"
 
-oldest = datetime.strptime(
+oldest_from_config = datetime.strptime(
     START_DATE,
     "%Y-%m-%d"
 ).timestamp()
@@ -26,6 +29,13 @@ latest = datetime.strptime(
     END_DATE,
     "%Y-%m-%d"
 ).timestamp()
+
+last_saved_timestamp = float(load_last_timestamp())
+
+oldest = max(
+    oldest_from_config,
+    last_saved_timestamp
+)
 
 client = WebClient(token=TOKEN)
 
@@ -52,7 +62,7 @@ try:
         all_messages.extend(messages)
 
         print(
-            f"{len(messages)} mesaj çekildi. Toplam: {len(all_messages)}"
+            f"{len(messages)} yeni mesaj çekildi. Toplam: {len(all_messages)}"
         )
 
         cursor = response.get(
@@ -72,6 +82,34 @@ try:
         exist_ok=True
     )
 
+    existing_messages = []
+
+    if OUTPUT_FILE.exists():
+
+        with open(
+            OUTPUT_FILE,
+            "r",
+            encoding="utf-8"
+        ) as f:
+
+            existing_messages = json.load(f)
+
+    combined_messages = existing_messages + all_messages
+
+    unique_messages = {
+        message["ts"]: message
+        for message in combined_messages
+    }
+
+    final_messages = list(
+        unique_messages.values()
+    )
+
+    final_messages.sort(
+        key=lambda message: float(message["ts"]),
+        reverse=True
+    )
+
     with open(
         OUTPUT_FILE,
         "w",
@@ -79,19 +117,32 @@ try:
     ) as f:
 
         json.dump(
-            all_messages,
+            final_messages,
             f,
             ensure_ascii=False,
             indent=4
         )
 
+    if all_messages:
+
+        latest_message_timestamp = max(
+            float(message["ts"])
+            for message in all_messages
+        )
+
+        save_last_timestamp(
+            str(latest_message_timestamp)
+        )
+
     print("\nTamamlandı.")
     print(
-        f"Toplam mesaj sayısı: {len(all_messages)}"
+        f"Yeni çekilen mesaj sayısı: {len(all_messages)}"
     )
-
     print(
-        f"Dosya oluşturuldu: {OUTPUT_FILE}"
+        f"Toplam kayıtlı mesaj sayısı: {len(final_messages)}"
+    )
+    print(
+        f"Dosya güncellendi: {OUTPUT_FILE}"
     )
 
 except SlackApiError as e:

@@ -296,3 +296,21 @@ Backend Development • Automation • Knowledge Management • AI-Ready Systems
 ## License
 
 This project is provided for educational and portfolio purposes.
+
+---
+
+## Incremental Updates
+
+The workflow supports incremental updates using a local `state.json` file.
+
+After each successful run, the latest Slack message timestamp is stored locally.
+
+On subsequent executions, only messages and files shared after the last recorded timestamp are fetched from Slack. This reduces processing time, prevents duplicate exports, and keeps the generated repository structure synchronized with new channel activity.
+
+### Benefits
+
+* Faster workflow execution
+* Avoids duplicate message processing
+* Downloads only newly shared files
+* Keeps documentation and exports up to date
+* Scales better for long-running projects
